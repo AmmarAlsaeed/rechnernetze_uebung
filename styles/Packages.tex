@@ -5,13 +5,37 @@
 % Modul fuer verwendete Pakete.
 % Neue Pakete einfach einfuegen mit dem \usepackage Befehl:
 % \usepackage[options]{packagename}
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage{dsfont}
-\usepackage[ngerman]{babel}
-\usepackage{lmodern}
+
+\usepackage{ifxetex}
+\usepackage{ifluatex}
+% setting up a helper macro
+\newif\ifxetexorluatex
+\ifxetex
+    \xetexorluatextrue
+\else
+    \ifluatex
+        \xetexorluatextrue
+    \else
+        \xetexorluatexfalse
+    \fi
+\fi
+% using appropiate locale settings for latex compiler
+\ifxetexorluatex
+    \usepackage{polyglossia}
+    \usepackage{csquotes}
+    \setdefaultlanguage[babelshorthands=true, spelling=new]{german}
+    \setotherlanguage{english}
+    \setdefaultlanguage[]{english}
+\else
+    \usepackage{ngerman}[babel]
+    \usepackage[T1]{fontenc}
+    \usepackage[utf8]{inputenc}
+    \usepackage{dsfont}
+    \usepackage{lmodern}
+\fi
+
 \usepackage{graphicx}
-%\usepackage[pdftex,hyperref,dvipsnames]{xcolor}
+\usepackage[hyperref,dvipsnames]{xcolor}
 \usepackage{listings}
 \usepackage[a4paper,lmargin={2cm},rmargin={2cm},tmargin={3.5cm},bmargin = {2.5cm},headheight = {4cm}]{geometry}
 \usepackage{amsmath,amssymb,amstext,amsthm}

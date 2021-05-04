@@ -31,20 +31,7 @@
 % Nutze den \exercise{Aufgabenname} Befehl, um eine neue Aufgabe zu beginnen.
 % Möchtest du eine Aufgabe in der Nummerierung überspringen, schreibe vor der Aufgabe: \stepcounter{exnum}
 % Möchtest du die Nummer einer Aufgabe auf eine beliebige Zahl x setzen, schreibe vor der Aufgabe: \setcounter{exnum}{x}
-\exercise{Meshgenerierung}
-\begin{enumerate}[label=\arabic*.]
-    \item Für ein Terrain, bestehend aus einem $n \cdot n$ Mesh, müssen $(n - 1)^2 \cdot 2$ Dreiecke gezeichnet werden.
-
-          Für jedes Dreieck werden 3 Indices benötigt, also insgesamt $(n - 1)^2 \cdot 6$.
-\end{enumerate}
-
-\setcounter{exnum}{4}
-\exercise{Level-of-Detail Tesselation}
-\begin{enumerate}
-    \item[5.] Mit der einfachen Abbildung werden die Positionen der ursprünglichen Vertices auf Texelecken abgebildet. Aufgrund der Texturinterpolation wird dort allerdings nicht genau der erwartete Höhenwert berechnet, denn dafür müsste der Vertex auf den entsprechenden Texelmittelpunkt abgebildet werden.
-
-          Dieses Problem führt dazu, dass viele Bäume über dem Terrain schweben, da der Boden eine andere Höhe hat als erwartet. Durch eine Verschiebung der Texturkoordinaten um je einen halben Texel in beide Richtungen lässt sich das verbessern.
-\end{enumerate}
+\exercise{}
 
 % Ende des Dokuments
 \end{document}
