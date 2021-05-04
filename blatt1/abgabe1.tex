@@ -31,7 +31,22 @@
 % Nutze den \exercise{Aufgabenname} Befehl, um eine neue Aufgabe zu beginnen.
 % Möchtest du eine Aufgabe in der Nummerierung überspringen, schreibe vor der Aufgabe: \stepcounter{exnum}
 % Möchtest du die Nummer einer Aufgabe auf eine beliebige Zahl x setzen, schreibe vor der Aufgabe: \setcounter{exnum}{x}
+\setcounter{exnum}{1}
+\exercise{Schichtenmodell}
 
+\begin{enumerate}[label=(\alph*)]
+    \item   Transport Control Protocol (TCP): Transport Layer \\
+            Internet Protocol Version 4 (IPV4): Network Layer \\
+            Ethernet: Data Link \\
+            Frame: Data Link 
+    \item   An dem aufgezeichneten Kommunkationsvorgang sind zwei Teilnehmer\\
+            beteiligt (IP 213.234.110.251 und IP 213.234.110.145). 
+    \item   Im Kommunkationsvorgang werden drei Nutznachrichten gesendet. \\
+            Nachricht 1: Hallo? \\
+            Nachricht 2: Was passiert? \\
+            Nachricht 3: Rechnernetze!
+\end{enumerate}
+ 
 \setcounter{exnum}{2}
 \exercise{Digitale Übertragung}
 \newcommand{\encodinggraph}[3]{
@@ -75,5 +90,30 @@
           \end{tikzpicture}
 \end{enumerate}
 
+
+\setcounter{exnum}{3}
+\exercise{Theoreme von Fourier, etc.}
+    \begin{enumerate}[label=(\alph*)]
+        \item   Für die erste Übertragungsleitung kanne eine höhere Übertragungsarte erwartet werden. Aufgrund der höheren Anzahl an harmonischen
+                Frequenzen in Übertragunsgleitung 1 (12 Harmonische) im Gegensatz zur Übertragungsleitung 2 (10 Harmonische) ergibt sich eine größere Bandbreite,
+                welche für eine größere Übertragungsrate sorgt.
+        \item   Mit einem Rauschabstand S/R = 1023 und dem zu verwendenenden Theorem von Shannon für einen verrauschten Kanal ergibt sich 
+                für Übertragungsleitung 2: 
+            \begin{align*}
+                \text{mit } B &= 10 \cdot \frac{1}{0.05 s} = 200 \text{ Hz} \\
+                \text{maximale Bitrate } &\leq B \cdot log_{2} (1+ S/R) \\
+                &= 200 \cdot log_{2}(1024) \\
+                &= 200 \cdot 10 \\
+                &= 2000 \text{ bit/s}
+            \end{align*}
+        \item Mit 8 diskreten Stufen (V=8) und dem zu verwendeten Theorem von Nyquist für einen rauschfreien Kanal ergibt sich für Übertragungsleitung 1: 
+            \begin{align*}
+                \text{mit } B &= 12 \cdot \frac{1}{0.05 s} = 240 \text{ Hz}\\
+                \text{maximale Bitrate } &\leq 2 \cdot B \cdot log_{2} V \\
+                &= 2 \cdot 240 \cdot log_{2}(8) \\
+                &= 480 \cdot 3 \\
+                &= 1440 \text{ bit/s}\\
+            \end{align*}
+    \end{enumerate}
 % Ende des Dokuments
 \end{document}
