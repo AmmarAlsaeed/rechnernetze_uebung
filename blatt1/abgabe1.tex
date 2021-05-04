@@ -1,0 +1,79 @@
+% LaTeX Template für Abgaben an der Universität Stuttgart
+% Autor: Sandro Speth
+% Bei Fragen: Sandro.Speth@studi.informatik.uni-stuttgart.de
+%-----------------------------------------------------------
+% Hauptmodul des Templates: Hier können andere Dateien eingebunden werden
+% oder Inhalte direkt rein geschrieben werden.
+% Kompiliere dieses Modul um eine PDF zu erzeugen.
+
+% Dokumentenart. Ersetze 12pt, falls die Schriftgröße anzupassen ist.
+\documentclass[12pt]{scrartcl}
+% Einbinden der Pakete, des Headers und der Formatierung.
+% Mit den \include und \input Befehlen können Dateien eingebunden werden:
+% \include: Fügt einen Seitenumbruch nach dem Text ein
+% \input: Fügt KEINEN Seitenumbruch nach dem Text ein
+\input{../styles/Packages.tex}
+\input{../styles/FormatAndHeader.tex}
+
+% Counter für das Blatt und die Aufgabennummer.
+% Ersetze die Nummer des Übungsblattes und die Nummer der Aufgabe
+% den Anforderungen entsprechend.
+% Definiert werden die Counter in FormatAndHeader.tex
+% Beachte:
+% \setcounter{countername}{number}: Legt den Wert des Counters fest
+% \stepcounter{countername}: Erhöht den Wert des Counters um 1.
+\setcounter{sheetnr}{1} % Nummer des Übungsblattes
+\setcounter{exnum}{1} % Nummer der Aufgabe
+
+% Beginn des eigentlichen Dokuments
+\begin{document}
+
+% Nutze den \exercise{Aufgabenname} Befehl, um eine neue Aufgabe zu beginnen.
+% Möchtest du eine Aufgabe in der Nummerierung überspringen, schreibe vor der Aufgabe: \stepcounter{exnum}
+% Möchtest du die Nummer einer Aufgabe auf eine beliebige Zahl x setzen, schreibe vor der Aufgabe: \setcounter{exnum}{x}
+
+\setcounter{exnum}{2}
+\exercise{Digitale Übertragung}
+\newcommand{\encodinggraph}[3]{
+    \draw[help lines] (0,0) grid (8,2);
+    \draw[very thin] (0,0) rectangle (8,2);
+    \node[] at (-0.5, 0) {\small #1};
+    \node[] at (-0.5, 1) {\small #2};
+    \node[] at (-0.5, 2) {\small #3};
+    \node[rotate=90] at (-1.25, 1) {Amplitude};
+    \foreach \i/\x in {0/1,1/1,2/1,3/1,4/1,5/0,6/1,7/0}{
+            \node[] at (0.5 + \i, -0.25) {\small \x};
+        }
+}
+\newcommand{\up}{++(0,2)}
+\newcommand{\down}{++(0,-2)}
+\newcommand{\step}{++(1,0)}
+\newcommand{\hstep}{++(0.5,0)}
+
+\begin{enumerate}[label=(\alph*)]
+    \item Non-Return-To-Zero (NRZ) Codierung\\
+          \begin{tikzpicture}
+              \encodinggraph{}{0.5}{1}
+              \draw[very thick, blue] (0,2) -- ++(5,0) -- \down -- \step -- \up -- \step -- \down -- \step;
+          \end{tikzpicture}
+    \item NRZ-Invert Codierung\\
+          \begin{tikzpicture}
+              \encodinggraph{}{0.5}{1}
+              \draw[very thick, blue] (0,0) -- ++(0.5,0) -- \up -- \step -- \down -- \step -- \up -- \step -- \down -- \step -- \up -- \step -- \step -- \down -- ++(1.5,0);
+          \end{tikzpicture}
+    \item Manchester-Codierung\\
+          \begin{tikzpicture}
+              \encodinggraph{}{0.5}{1}
+              \draw[very thick, blue] (0,2) -- \hstep -- \down -- \hstep -- \up -- \hstep -- \down -- \hstep -- \up -- \hstep -- \down -- \hstep -- \up -- \hstep -- \down -- \hstep -- \up -- \hstep -- \down -- \step -- \up -- \step -- \down -- \step -- \up -- \hstep;
+          \end{tikzpicture}
+    \item MLT3-Codierung\\
+          \renewcommand{\up}{++(0,1)}
+          \renewcommand{\down}{++(0,-1)}
+          \begin{tikzpicture}
+              \encodinggraph{-1}{0}{1}
+              \draw[very thick, blue] (0,1) -- \hstep -- \up -- \step -- \down -- \step -- \down -- \step -- \up -- \step -- \up -- \step -- \step -- \down -- \step -- \hstep;
+          \end{tikzpicture}
+\end{enumerate}
+
+% Ende des Dokuments
+\end{document}
