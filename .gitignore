@@ -8,3 +8,6 @@
 *.out
 *.nav
 *.snm
+build/
+.gradle/
+.idea/
