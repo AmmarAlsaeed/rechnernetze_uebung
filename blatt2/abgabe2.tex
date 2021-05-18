@@ -25,6 +25,8 @@
 \setcounter{sheetnr}{2} % Nummer des Übungsblattes
 \setcounter{exnum}{1} % Nummer der Aufgabe
 
+\usetikzlibrary{chains,positioning}
+
 % Beginn des eigentlichen Dokuments
 \begin{document}
 
@@ -39,49 +41,99 @@
                 Hamming-Abstand von A zu C: 6\\
                 Der Hamming-Abstand von h ist also 3.
         \item   Mit D = 10100010 lässt sich der maximale Hamming-Abstand von 4 erzielen.
-        \item   Mit einem Hamming-Abstand von 3 lassen sich Fehler bis zur Länge 2 erkennen (mit d > F).
-        \item   Mit einem Hamming-Abstand von 3 lässt sich Fehler bis zur Länge 1 korrigieren (mit d > 2F)\\
+        \item   Mit einem Hamming-Abstand von 3 lassen sich Fehler bis zur Länge 2 erkennen (mit $d > f$).
+        \item   Mit einem Hamming-Abstand von 3 lassen sich Fehler bis zur Länge 1 korrigieren (mit $d > 2f$)
     \end{enumerate}
  
 \setcounter{exnum}{2}
 \exercise{Fehlererkennung durch CRC}
     \begin{enumerate}[label=(\alph*)]
-        \item Polynomdivision mit $F(x) \bmod G_{USB}(x)$:\\
+        \item Polynomdivision mit $F(x) \bmod G_\text{USB}(x)$:\\
         \begin{tabular}{c c c c c c c c c c c}
         1 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 1 \\
         1 & 0 & 0 & 1 & 0 & 1 \\
-        \hline
+        \cline{1-6}
           &   &   & 1 & 0 & 1 & 1 & 0 & 0 \\
           &   &   & 1 & 0 & 0 & 1 & 0 & 1 \\
-        \hline
+        \cline{4-9}
           &   &   &   &   & 1 & 0 & 0 & 1 & 0 & 1 \\
           &   &   &   &   & 1 & 0 & 0 & 1 & 0 & 1 \\
-        \hline
+        \cline{6-11}
           &   &   &   &   &   &   &   &   &   & 0 \\
         \end{tabular}\\
-        Dh. der Fehler kann nicht erkannt werden, da $F(x) \bmod G_{USB}(x) = 0$.
-        \item   Da die Länge des Bündelfehlers k größer ist als der Grad des Generatorpolynoms r, 
-        kann der Fehler nicht sicher erkannt werden. \\
+        Dh. der Fehler kann nicht erkannt werden, da $F(x) \bmod G_\text{USB}(x) = 0$.
+        \item Da die Länge des Bündelfehlers $k$ größer ist als der Grad des Generatorpolynoms $r$, 
+        kann der Fehler nicht sicher erkannt werden.
     \end{enumerate}
 
+\newpage
 \setcounter{exnum}{3}
+\newcommand{\sendefluss}[2]{
+    \ifdefined\thenodeid \else \newcounter{nodeid} \fi
+    \begin{tikzpicture}
+        \tikzset{frame/.style={draw},
+                every node/.style={minimum width=1.2em}}
+        \begin{scope}[start chain=toprow going right, start chain=botrow going right, node distance=1em]
+            \setcounter{nodeid}{0}
+            \node[on chain=toprow] (topstart) {Sender};
+            \foreach \x in {#1} {
+                \node [frame,on chain=toprow] (top-\thenodeid) {\x};
+                \stepcounter{nodeid}
+            }
+            \node[on chain=toprow] (top-\thenodeid) {};
+            \stepcounter{nodeid}
+            \node[on chain=toprow] (top-\thenodeid) {};
+            \node[on chain=botrow, below right= 4em and -3.5em of topstart,] (botstart) {\small Empfänger};
+            \setcounter{nodeid}{0}
+            \def\X{X}
+            \def\D{D}
+            \foreach \x in {#2} {
+                \if\x\X
+                    \node [on chain=botrow] (bot-\thenodeid) {\x}; 
+                \else
+                \if\x\D
+                        \node [on chain=botrow] (bot-\thenodeid) {\x};
+                    \else
+                        \node [frame,on chain=botrow] (bot-\thenodeid) {\x};
+                        \pgfmathtruncatemacro\topid{\thenodeid + 2}
+                        \draw[-latex] (bot-\thenodeid) -- (top-\topid)
+                            node[pos=0.25, above,sloped] {\tiny ACK};
+                    \fi
+                \fi
+                \draw[-latex] (top-\thenodeid) -- (bot-\thenodeid);
+                \stepcounter{nodeid}
+            }
+        \end{scope}
+    \end{tikzpicture}
+}
+
 \exercise{Flusskontrolle}
     \begin{enumerate}[label=(\alph*)]
-        \item   Zunächst sollte die Frame transmission time berechnet werden (Annahme: 1MB = 1000kB): 
+        \item Zunächst sollte die Frame transmission time berechnet werden\\ (Annahme: $\SI{1}{\mega\byte}$ = \SI{1000}{\kilo\byte}): 
         \begin{align*}
-            T_{it} &= \frac{20 MB}{100 kB/s} = 200 s
-        \end{align*}\\
-        Damit lässt sich die Kanalauslastung berechnen (Annahme: $T_{ic}, \, T_{ac}\, $und $ T_{at}$ vernachlässigbar):\\
-        \begin{align*}
-            U &= \frac{T_{it}}{T_{ip} + T_{it} + T_{ap}}\\
-            &= \frac{200 s}{300 s + 200 s + 300s}\\
-            &= \frac{200s}{800s} = \frac{1}{4}
+            T_\text{it} &= \frac{\SI{20}{\mega\byte}}{\SI{100}{\kilo\byte/\second}} = \SI{200}{\second}
         \end{align*}
-        \item   \begin{enumerate}[label=(\roman*)]
-            \item bruh thomas trägt ein
-            \item Für Go-Back-N mit $N\rightarrow \infty$ senden wir $N_{Go-Back-N} = \frac{7}{4} N$ Rahmen.\\
-                Für Selective-Repeat mit $N\rightarrow \infty$ senden wir $N_{Sel.-Repeat} = \frac{3}{2} N$ Rahmen.\\
-                Also werden für Go-Back-N $\frac{1}{4} N$ mehr Rahmen gesendet.
+        Damit lässt sich die Kanalauslastung berechnen (Annahme: $T_\text{ic}, \; T_\text{ac}$ und $T_\text{at}$ vernachlässigbar):
+        \begin{align*}
+            U &= \frac{T_\text{it}}{T_\text{ip} + T_\text{it} + T_\text{ap}}\\
+            &= \frac{\SI{200}\second}{\SI{300}\second + \SI{200}\second + \SI{300}\second}\\
+            &= \frac{\SI{200}\second}{\SI{800}\second} = \frac{1}{4}
+        \end{align*}
+        \item \begin{enumerate}[label=(\roman*)]
+            \item Siehe Abbildungen.
+            \begin{figure}[h]
+                %\centering
+                \sendefluss{1,2,3,4,2,3,4,5,6,7,8,6,7,8}{1,X,D,D,2,3,4,5,X,D,D,6,7,8}
+                \caption{Zeitdiagramm für Go-Back-N}
+            \end{figure}               
+            \begin{figure}[h]
+                %\centering
+                \sendefluss{1,2,3,4,2,5,4,6,7,8,6,9,8}{1,X,3,X,2,5,4,X,7,X,6,9,8}
+                \caption{Zeitdiagramm für Selective-Repeat}
+            \end{figure}                
+            \item Für Go-Back-N mit $N\rightarrow \infty$ senden wir $N_\text{Go-Back-N} = \frac{7}{4} N$ Rahmen.\\
+            Für Selective-Repeat mit $N\rightarrow \infty$ senden wir $N_\text{Sel.-Repeat} = \frac{3}{2} N$ Rahmen.\\
+            Also werden für Go-Back-N $\frac{1}{4} N$ mehr Rahmen gesendet.
         \end{enumerate}
     \end{enumerate}
 
