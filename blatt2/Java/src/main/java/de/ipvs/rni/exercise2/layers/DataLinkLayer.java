@@ -99,13 +99,13 @@ public class DataLinkLayer implements ProcessEvents
         }
         while (!retransmissionQueue.isEmpty()) { //frames waiting for retransmission -> retransmit next
             Frame rtFrame = retransmissionQueue.poll();
-            toLower.add(new Frame(rtFrame));
+            toLower.add(rtFrame);
             inFlight.add(rtFrame);
             retransmissionTimeouts.add(curTime + RETRANSMISSION_TIMEOUT);
         }
         while (availWindow > 0 && !fromUpper.isEmpty()) { //upper layer frames waiting -> transmit if window open, decrement window
             Frame nextFrame = createNextFrame(fromUpper);
-            toLower.add(new Frame(nextFrame));
+            toLower.add(nextFrame);
             inFlight.add(nextFrame);
             retransmissionTimeouts.add(curTime + RETRANSMISSION_TIMEOUT);
             availWindow--;

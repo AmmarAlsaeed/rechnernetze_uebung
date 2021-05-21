@@ -47,7 +47,7 @@ public class PhysicalLayer implements ProcessEvents
             if (x > PACKET_FAILURE_RATE && toSent.getPayload() != null && DataLinkLayer.CRC_IMPLEMENTED)
             {
                 System.out.println("[PHY]Corrupt frame: " + toSent.toString());
-                f.getPayload()[toSent.getPayload().length/2] = 0; /// Reference prpblem cpoy thingfs .arrayCpoy
+                toSent.getPayload()[toSent.getPayload().length/2] = 0; /// Reference prpblem cpoy thingfs .arrayCpoy
 
             }
             else
