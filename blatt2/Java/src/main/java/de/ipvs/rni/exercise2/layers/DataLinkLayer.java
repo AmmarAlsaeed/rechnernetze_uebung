@@ -52,19 +52,19 @@ public class DataLinkLayer implements ProcessEvents
     @Override
     public void process()
     {
-        //handle incoming packet
-        if (!fromLower.isEmpty()) { //receive frame
+        //handle incoming frame
+        while (!fromLower.isEmpty()) { //receive frame
             Frame frame = fromLower.poll();
             boolean frameValid = frame.checkIntegrity();
             if (frame.isAck()) { //ACK frame
                 int size = inFlight.size();
-                for (int i = 0; i < size; i++) { //iterate over in-flight packets and timeouts
+                for (int i = 0; i < size; i++) { //iterate over in-flight frames and timeouts
                     Frame f = inFlight.poll();
                     int timeout = retransmissionTimeouts.poll();
-                    if (f.getSeqNo() > frame.getAckNo()) { //packet later than ackNo -> return to queue
+                    if (f.getSeqNo() > frame.getAckNo()) { //frame later than ackNo -> return to queue
                         inFlight.add(f);
                         retransmissionTimeouts.add(timeout);
-                    } else { //packet before/at ackNo -> remove from queue and increment window
+                    } else { //frame before/at ackNo -> remove from queue and increment window
                         availWindow++;
                     }
                 }
@@ -79,29 +79,31 @@ public class DataLinkLayer implements ProcessEvents
             }
         }
 
-        //check in-flight packet timeouts
+        //check in-flight frame timeouts
         int size = inFlight.size();
-        for (int i = 0; i < size; i++) { //iterate over in-flight packets and timeouts
+        for (int i = 0; i < size; i++) { //iterate over in-flight frame and timeouts
             Frame f = inFlight.poll();
             int timeout = retransmissionTimeouts.poll();
-            if (timeout > curTime) { //packet not timed out yet -> return to queue
+            if (timeout > curTime) { //frame not timed out yet -> return to queue
                 inFlight.add(f);
                 retransmissionTimeouts.add(timeout);
-            } else { //packet timed out -> remove from in-flight and timeout queues, add to retransmission queue
+            } else { //frame timed out -> remove from in-flight and timeout queues, add to retransmission queue
                 retransmissionQueue.add(f);
             }
         }
 
-        //send outgoing packet if necessary
+        //send outgoing frame if necessary
         if (nextSeqNo > nextAck) { //send ACK if required (with highest received sequence number)
             nextAck = nextSeqNo;
             toLower.add(new Frame(nextAck - 1));
-        } else if (!retransmissionQueue.isEmpty()) { //packets waiting for retransmission -> retransmit next
+        }
+        while (!retransmissionQueue.isEmpty()) { //frames waiting for retransmission -> retransmit next
             Frame rtFrame = retransmissionQueue.poll();
             toLower.add(new Frame(rtFrame));
             inFlight.add(rtFrame);
             retransmissionTimeouts.add(curTime + RETRANSMISSION_TIMEOUT);
-        } else if (availWindow > 0 && !fromUpper.isEmpty()) { //upper layer packets waiting -> transmit if window open, decrement window
+        }
+        while (availWindow > 0 && !fromUpper.isEmpty()) { //upper layer frames waiting -> transmit if window open, decrement window
             Frame nextFrame = createNextFrame(fromUpper);
             toLower.add(new Frame(nextFrame));
             inFlight.add(nextFrame);
