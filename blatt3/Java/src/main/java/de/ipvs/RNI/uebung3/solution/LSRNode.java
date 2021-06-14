@@ -14,6 +14,7 @@ public class LSRNode extends NodeBase implements Node {
 	private static final int INFINITE_DISTANCE = 1000;
 
 	private int lspSeqnum = 0;
+	private int pktSrc;
 
 	private HashMap<Integer, LSRPacket> lsps;
 
@@ -30,7 +31,7 @@ public class LSRNode extends NodeBase implements Node {
 	 */
 	public void init() {
 		System.out.println("node " + getAddress() + " - initializing!");
-		routingTable.flush(); //clear routing table at the start
+		routingTable = new RoutingTable(); //create new routing table at the start
 
 		lsps = new HashMap<>();
 
@@ -75,12 +76,14 @@ public class LSRNode extends NodeBase implements Node {
 		System.out.println("node " + getAddress() + " - received from " + source + ": \"" + pkt + "\"");
 
 		LSRPacket lsp = LSRPacket.convertFromString(pkt); //decode packet from message
+		if (lsp.getTTL() <= 0) return;
 		int lspSrc = lsp.getSrc();
 
 		//if no LSP from source stored or stored LSP has lower sequence number: store and forward LSP
 		if (!lsps.containsKey(lspSrc) || lsp.getSeqNum() > lsps.get(lspSrc).getSeqNum()) {
 			lsps.put(lspSrc, new LSRPacket(lsp));
-			forwardLSP(source, lsp);
+			pktSrc = source;
+			forwardLSP(lsp);
 		}
 
 		if (lsps.size() == NETWORK_SIZE) buildRoutingTable(); //build routing table if all LSPs have been received
@@ -129,6 +132,7 @@ public class LSRNode extends NodeBase implements Node {
 
 		//create routing table from dijkstra results
 		for (int dest = 0; dest < NETWORK_SIZE; dest++) {
+			if (dest == addr) continue;
 			int nextHop = dest;
 			while (nextHop >= 0 && prev[nextHop] != addr) nextHop = prev[nextHop]; //find next hop
 			if (nextHop >= 0) routingTable.add(new Route(dest, nextHop, dist[dest])); //add route to table (if it exists)
@@ -138,10 +142,9 @@ public class LSRNode extends NodeBase implements Node {
 	/**
 	 * forwarding a received LSP
 	 *
-	 * @param pktSrc Sender of received LSP packet
 	 * @param lsp LSP to forward
 	 */
-	public void forwardLSP(int pktSrc, LSRPacket lsp) {
+	public void forwardLSP(LSRPacket lsp) {
 		lsp.decreaseTTL(); //decrease TTL, discard if TTL reaches 0
 		if (lsp.getTTL() <= 0) return;
 

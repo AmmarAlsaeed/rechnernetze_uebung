@@ -26,13 +26,10 @@ public class DVNode extends NodeBase implements Node {
      */
     public void init() {
         System.out.println("node " + getAddress() + " - initializing!");
-        routingTable.flush(); //clear routing table at the start
-
-        int addr = getAddress();
-
-        routingTable.add(new Route(addr, addr, 0)); //add route to this node itself with cost 0
+        routingTable = new RoutingTable(); //create new routing table at the start
 
         //add direct routes for all directly linked neighbours of this node
+        int addr = getAddress();
         for (Link l : interfaces) {
             if (!l.isUp()) continue;
             int dest = l.getDest(addr);
@@ -83,7 +80,7 @@ public class DVNode extends NodeBase implements Node {
 
         //downgrade all cut routes to "infinite" cost
         for (int dest : cutRoutes) {
-            downgradeRoute(dest, MAX_PATH_LENGTH + 1);
+            downgradeRoute(dest, MAX_PATH_LENGTH);
         }
 
         sendDVMessages(ALL_NEIGHBOURS); //routing updated, send messages to neighbours
@@ -110,8 +107,10 @@ public class DVNode extends NodeBase implements Node {
         int messageFlag = 0;
 
         //update routing table
+        int addr = getAddress();
         for (Route newRoute : receivedRoutes) {
             int dest = newRoute.getDest();
+            if (dest == addr) continue;
             Route oldRoute = routingTable.findRoute(dest);
 
             /* update route if:
@@ -127,7 +126,7 @@ public class DVNode extends NodeBase implements Node {
                 messageFlag |= 0x2; //routing updated, so messages should be sent
             }
 
-            if (newRoute.getCost() > MAX_PATH_LENGTH) {
+            if (newRoute.getCost() >= MAX_PATH_LENGTH) {
                 messageFlag |= 0x1; //sender has incomplete routing info, so message should be sent
             }
         }
@@ -136,6 +135,7 @@ public class DVNode extends NodeBase implements Node {
         if (messageFlag == 0) {
             for (Enumeration<Route> routes = routingTable.enumerate(); routes.hasMoreElements(); ) {
                 Route r = routes.nextElement();
+                if (r.getDest() == source) continue;
                 if (Arrays.stream(receivedRoutes).noneMatch(e -> e.getDest() == r.getDest())) {
                     messageFlag |= 0x1;
                     break;
@@ -197,7 +197,7 @@ public class DVNode extends NodeBase implements Node {
         for (int i = 0; i < parts.length; i += 2) {
             int dest = Integer.parseInt(parts[i]);
             int cost = Integer.parseInt(parts[i + 1]);
-            int routeCost = Math.min(cost + sourceCost, MAX_PATH_LENGTH); //route cost is received cost + source link cost, up to MAX_PATH_LENGTH
+            int routeCost = Math.min(cost + sourceCost, MAX_PATH_LENGTH - 1); //route cost is received cost + source link cost, up to MAX_PATH_LENGTH
             routes[i / 2] = new Route(dest, source, routeCost);
         }
 
