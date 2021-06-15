@@ -182,23 +182,20 @@ public class DVNode extends NodeBase implements Node {
     private Route[] readDVMessage(int source, String message) {
         int addr = getAddress();
 
-        //get cost of direct link to message source
-        int sourceCost = -1;
-        for (Link l : interfaces) {
-            if (l.getDest(addr) == source && l.isUp()) {
-                sourceCost = l.getCost();
-            }
-        }
-        if (sourceCost < 0) return null; //return null if there is no direct link to message source
+        //get route to message source
+        Route routeToSource = routingTable.findRoute(source);
+        if (routeToSource == null) return null;
+        int sourceCost = routeToSource.getCost();
+        int sourceHop = routeToSource.getNextHop();
 
-        //dissect message and store route data, with the cost of the link to the source already taken into account
+        //dissect message and store route data, with the cost of the route to the source already taken into account
         String[] parts = message.split(";");
         Route[] routes = new Route[parts.length / 2];
         for (int i = 0; i < parts.length; i += 2) {
             int dest = Integer.parseInt(parts[i]);
             int cost = Integer.parseInt(parts[i + 1]);
-            int routeCost = Math.min(cost + sourceCost, MAX_PATH_LENGTH - 1); //route cost is received cost + source link cost, up to MAX_PATH_LENGTH
-            routes[i / 2] = new Route(dest, source, routeCost);
+            int routeCost = Math.min(cost + sourceCost, MAX_PATH_LENGTH - 1); //route cost is received cost + source route cost, up to MAX_PATH_LENGTH
+            routes[i / 2] = new Route(dest, sourceHop, routeCost);
         }
 
         return routes;
