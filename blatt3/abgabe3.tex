@@ -45,8 +45,56 @@
  
 \setcounter{exnum}{2}
 \exercise{Distanz-Vektor-Routing}
-    TODO
-
+    \newcommand{\un}{$\infty$}
+    \textit{Pfadangabe wurde bei direktem Weg der übersichtshalber ausgelassen}
+    \begin{table}[h]
+        \centering
+        \begin{tabularx}{\textwidth}{|p{2.75cm}|X|X|X|X|X|X|X|}\hline
+            & \multicolumn{7}{c|}{Entfernung zu ... (Über)} \\\hline
+            Information gespeichert auf Knoten... 
+                & A     & B     & C     & D     & E     & F     & G     \\\hline
+            A   & 0     & 5     & 1     & 9     & \un   & \un   & \un   \\\hline 
+            B   & 5     & 0     & \un   & 4     & \un   & \un   & \un   \\\hline
+            C   & 1     & \un   & 0     & \un   & 2     & \un   & \un   \\\hline
+            D   & 9     & 4     & \un   & 0     & \un   & 8     & \un   \\\hline
+            E   & \un   & \un   & 2     & \un   & 0     & 7     & 2     \\\hline
+            F   & \un   & \un   & \un   & 8     & 7     & 0     & 1     \\\hline
+            G   & \un   & \un   & \un   & \un   & 2     & 1     & 0     \\\hline
+        \end{tabularx}
+        \caption{Routingtabelle nach der ersten Iteration (Iteration 0)}
+    \end{table}
+    \begin{table}[h]
+        \centering
+        \begin{tabularx}{\textwidth}{|p{2.75cm}|X|X|X|X|X|X|X|}\hline
+            & \multicolumn{7}{c|}{Entfernung zu... (Über)} \\\hline
+            Information gespeichert auf Knoten... 
+                & A     & B     & C     & D     & E     & F     & G     \\\hline
+            A   & 0     & 5     & 1     & 9 (B) & 3 (C) & 17 (D)& \un   \\\hline
+            B   & 5     & 0     & 6 (A) & 4     & \un   & 12 (D)& \un   \\\hline
+            C   & 1     & 6 (A) & 0     & 10 (A)& 2     & 9 (E) & 4 (E) \\\hline
+            D   & 9     & 4     & 10 (A)& 0     & 15 (F)& 8     & 9 (F) \\\hline
+            E   & 3 (C) & \un   & 2     & 15 (F)& 0     & 3 (G) & 2     \\\hline
+            F   & 17 (D)& 12 (D)& 9 (E) & 8     & 3 (G) & 0     & 1     \\\hline
+            G   & \un   & \un   & 4 (E) & 9 (F) & 2     & 1     & 0     \\\hline 
+        \end{tabularx}
+        \caption{Routingtabelle nach der zweiten Iteration (Iteration 1)}
+    \end{table}
+    \begin{table}[h]
+        \centering
+        \begin{tabularx}{\textwidth}{|p{2.75cm}|X|X|X|X|X|X|X|}\hline
+            & \multicolumn{7}{c|}{Entfernung zu... (Über)} \\\hline
+            Information gespeichert auf Knoten... 
+                & A     & B     & C     & D     & E     & F     & G     \\\hline
+            A   & 0     & 5     & 1     & 9 (B) & 3 (C) & 10 (C)& 5 (C) \\\hline
+            B   & 5     & 0     & 6(A)  & 4     & 8 (A) & 12 (D)& 13 (D)\\\hline
+            C   & 1     & 6 (A) & 0     & 10 (A)& 2     & 5 (E) & 4 (E) \\\hline
+            D   & 9     & 4     & 10 (A)& 0     & 11 (F)& 8     & 9 (F) \\\hline
+            E   & 3 (C) & 8 (C) & 2     & 11 (G)& 0     & 3 (G) & 2     \\\hline
+            F   & 10 (E)& 12 (D)& 5(G)  & 8     & 3 (G) & 0     & 1     \\\hline
+            G   & 5 (E) & 13 (F)& 4(E)  & 9 (F) & 2     & 1     & 0     \\\hline
+        \end{tabularx}
+        \caption{Routingtabelle nach der dritten Iteration (Iteration 2)}
+    \end{table}
 
 % Ende des Dokuments
 \end{document}
