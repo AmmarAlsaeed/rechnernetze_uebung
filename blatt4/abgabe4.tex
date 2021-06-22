@@ -36,7 +36,41 @@
 \setcounter{exnum}{1}
 \exercise{IP Multicast}
     \begin{enumerate}[label=(\alph*)]
-        \item  TODO
+        \item \ \\
+        \begin{tikzpicture}[]
+            \tikzset{every node/.style={draw, circle, color=white, fill=black}}
+
+            \node {4} 
+                child {
+                    node {0} 
+                    child { node {3} }
+                    } 
+                child {
+                    node {6}
+                    }
+                child {
+                    node {7} 
+                        child { node {1} }
+                        child { node {9} }
+                    };
+        \end{tikzpicture}
+        \begin{tikzpicture}
+            \tikzset{every node/.style={draw, circle, color=white, fill=black}}
+            \node {9}
+                child { 
+                    node {1}
+                    child { node {3} } 
+                    }
+                child { 
+                    node {5} 
+                    child { node {2} }
+                    }
+                child { 
+                    node {7} 
+                    child { node {4} }
+                    }
+                child { node {8} };
+        \end{tikzpicture}
         \item \ \\
             \begin{tabular}{c|c|c|c}
             Knoten & MC-Adresse & Sender & nächster Knoten \\
